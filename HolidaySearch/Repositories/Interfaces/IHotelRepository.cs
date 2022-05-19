@@ -1,11 +1,11 @@
 ﻿using HolidaySearch.Models;
+using HolidaySearch.Models.Response;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace HolidaySearch.Repositories.Interfaces
 {
 	public interface IHotelRepository
 	{
-		Task<List<Hotel>> LoadHotels();
+		DataResponse<List<Hotel>> LoadHotels(string filePath);
 	}
 }

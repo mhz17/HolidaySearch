@@ -1,11 +1,11 @@
 ﻿using HolidaySearch.Models;
+using HolidaySearch.Models.Response;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace HolidaySearch.Repositories.Interfaces
 {
 	public interface IFlightRepository
 	{
-		Task<List<Flight>> LoadFlights();
+		DataResponse<List<Flight>> LoadFlights(string filePath);
 	}
 }

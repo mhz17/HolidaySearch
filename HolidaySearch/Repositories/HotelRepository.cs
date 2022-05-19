@@ -1,37 +1,34 @@
-﻿using HolidaySearch.Constants;
-using HolidaySearch.Models;
+﻿using HolidaySearch.Models;
+using HolidaySearch.Models.Response;
 using HolidaySearch.Repositories.Interfaces;
-using HolidaySearch.Services;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Threading.Tasks;
 
 namespace HolidaySearch.Repositories
 {
 	public class HotelRepository : IHotelRepository
 	{
-		private readonly ConfigurationService _configurationService;
-
-		public HotelRepository(ConfigurationService configurationService)
+		public DataResponse<List<Hotel>> LoadHotels(string filePath)
 		{
-			_configurationService = configurationService;
-		}
-
-		public async Task<List<Hotel>> LoadHotels()
-		{
-			string path = _configurationService.GetFilePath(FileType.Hotels);
-			List<Hotel> hotels = new();
-
-			if (!string.IsNullOrEmpty(path))
+			DataResponse<List<Hotel>> response = new();
+			try
 			{
-				using StreamReader r = new(path);
-				string json = await r.ReadToEndAsync();
-				hotels = JsonConvert.DeserializeObject<List<Hotel>>(json);
-				return hotels;
-			}
+				using StreamReader reader = new(filePath);
+				string json = reader.ReadToEnd();
+				List<Hotel> hotels = JsonConvert.DeserializeObject<List<Hotel>>(json);
+				response.Success = true;
+				response.Data = hotels;
+				return response;
 
-			return hotels;
+			}
+			catch (Exception ex)
+			{
+				response.Success = false;
+				response.Error = $"Error Loading file. {ex.Message}";
+				return response;
+			}
 		}
 	}
 }

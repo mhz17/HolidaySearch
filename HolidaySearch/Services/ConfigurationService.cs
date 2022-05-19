@@ -13,7 +13,6 @@ namespace HolidaySearch.Services
 				var parentOfStartupPath = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, @"../../../"));
 				return Path.Combine(parentOfStartupPath, ConfigurationManager.AppSettings[fileType]);
 			}
-
 			return null;
 		}
 

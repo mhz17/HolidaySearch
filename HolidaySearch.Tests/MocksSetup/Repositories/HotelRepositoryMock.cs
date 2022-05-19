@@ -1,4 +1,5 @@
 ﻿using HolidaySearch.Models;
+using HolidaySearch.Models.Response;
 using HolidaySearch.Repositories.Interfaces;
 using Moq;
 using System.Collections.Generic;
@@ -15,9 +16,9 @@ namespace HolidaySearch.Tests.MocksSetup.Repositories
 			_hotelRepository = new Mock<IHotelRepository>();
 		} 
 
-		public void SetupLoadHotels(Task<List<Hotel>> hotels)
+		public void SetupLoadHotels(string filePath, DataResponse<List<Hotel>> hotels)
 		{
-			_hotelRepository.Setup(a => a.LoadHotels()).Returns(hotels);
+			_hotelRepository.Setup(a => a.LoadHotels(filePath)).Returns(hotels);
 		}
 	}
 }

@@ -20,6 +20,7 @@ namespace HolidaySearch
                 .AddTransient<ISearchService, SearchService>()
                 .AddTransient<IHotelRepository, HotelRepository>()
                 .AddTransient<IFlightRepository, FlightRepository>()
+                .AddTransient<IConfigurationService, ConfigurationService>()
                 .BuildServiceProvider();
 
             _fileService = serviceProvider.GetService<IFileService>();

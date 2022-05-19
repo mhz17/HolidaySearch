@@ -1,4 +1,5 @@
 ﻿using HolidaySearch.Models;
+using HolidaySearch.Models.Response;
 using System;
 using System.Collections.Generic;
 
@@ -16,7 +17,7 @@ namespace HolidaySearch.Tests.DataFactories
 			Nights = 7
 		};
 
-		public static List<Hotel> Hotels => new List<Hotel>()
+		public static List<Hotel> Hotels => new()
 		{
 			new Hotel {
 				Id = 1,
@@ -36,5 +37,7 @@ namespace HolidaySearch.Tests.DataFactories
 			}
 		};
 
+		public static DataResponse<List<Hotel>> ValidDataResponse => new DataResponse<List<Hotel>>() { Data = Hotels, Success = true };
+		public static DataResponse<List<Hotel>> InValidDataResponse => new DataResponse<List<Hotel>>() { Data = null, Success = false, Error = "Error" };
 	}
 }

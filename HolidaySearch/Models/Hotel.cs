@@ -1,14 +1,21 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 
 namespace HolidaySearch.Models
 {
 	public class Hotel
 	{
-		public int Id { get; set; }
+        [JsonProperty("id")]
+        public int Id { get; set; }
+        [JsonProperty("name")]
         public string Name { get; set; }
+        [JsonProperty("arrival_date")]
         public DateTime ArrivalDate { get; set; }
+        [JsonProperty("price_per_night")]
         public decimal PricePerNight { get; set; }
+        [JsonProperty("local_airports")]
         public string[] LocalAirports { get; set; }
+        [JsonProperty("nights")]
         public int Nights { get; set; }
 
     }
