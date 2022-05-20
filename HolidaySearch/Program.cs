@@ -82,7 +82,6 @@ namespace HolidaySearch
                 else
                 {
                     Console.WriteLine();
-                    Console.WriteLine(Errors.ErrorOccurred);
                     Console.WriteLine(response.Error);
                 }
             }
