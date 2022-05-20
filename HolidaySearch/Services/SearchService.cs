@@ -1,4 +1,5 @@
-﻿using HolidaySearch.Models;
+﻿using HolidaySearch.Constants;
+using HolidaySearch.Models;
 using HolidaySearch.Models.Request;
 using HolidaySearch.Models.Response;
 using HolidaySearch.Services.Interfaces;
@@ -22,7 +23,7 @@ namespace HolidaySearch.Services
 			if (searchRequest == null || !RequestValid(searchRequest))
 			{
 				response.Success = false;
-				response.Error = "Invalid request";
+				response.Error = Errors.InvalidRequest;
 				return response;
 			}
 
@@ -42,11 +43,13 @@ namespace HolidaySearch.Services
 				return response;
 			}
 
-			HolidaySearchResponse holidayResult = Search(searchRequest, flights.Data, hotels.Data);
+			List<HolidaySearchResponse> holidays = Search(searchRequest, flights.Data, hotels.Data);
+			HolidaySearchResponse holidayResult = holidays?.Count > 0 ? holidays?.OrderBy(a => a.TotalPrice)?.First(): null;
+
 			if (holidayResult == null)
 			{
 				response.Success = false;
-				response.Error = "No Holidays found";
+				response.Error = Errors.NoHolidaysFound;
 				return response;
 			} else
 			{
@@ -56,18 +59,24 @@ namespace HolidaySearch.Services
 			}
 		}
 
-		private static HolidaySearchResponse Search(HolidaySearchRequest searchRequest, List<Flight> flights, List<Hotel> hotels)
+		private static List<HolidaySearchResponse> Search(HolidaySearchRequest searchRequest, List<Flight> flights, List<Hotel> hotels)
 		{
-			HolidaySearchResponse response = new();
+			List<HolidaySearchResponse> response = new();
 			var departingFrom = GetDepartureAirports(searchRequest.DepartingFrom);
-			List<Flight> matchingFlights = flights.Where(a => (departingFrom == null || departingFrom.Contains(a.From)) && a.To == searchRequest.TravelingTo && a.DepratureDate == DateTime.Parse(searchRequest.DepartureDate))?.OrderBy(a => a.Price)?.ToList();
-			List<Hotel> matchingHotels = hotels.Where(a => a.LocalAirports.Any(b => b == searchRequest.TravelingTo) && a.ArrivalDate == DateTime.Parse(searchRequest.DepartureDate) && a.Nights == int.Parse(searchRequest.Duration))?.OrderBy(a => a.PricePerNight)?.ToList();
+			List<Flight> matchingFlights = flights.Where(a => (departingFrom == null || departingFrom.Contains(a.From?.ToLower())) && a.To?.ToLower() == searchRequest.TravelingTo?.ToLower() && a.DepratureDate == DateTime.Parse(searchRequest.DepartureDate))?.OrderBy(a => a.Price)?.ToList();
+			List<Hotel> matchingHotels = hotels.Where(a => a.LocalAirports.Any(b => b?.ToLower() == searchRequest.TravelingTo?.ToLower()) && a.ArrivalDate == DateTime.Parse(searchRequest.DepartureDate) && a.Nights == int.Parse(searchRequest.Duration))?.OrderBy(a => a.PricePerNight * a.Nights)?.ToList();
 
-			if (matchingFlights.Any() && matchingHotels.Any())
+			foreach (Flight flight in matchingFlights)
 			{
-				response.TotalPrice = matchingFlights.First().Price + matchingHotels.First().PricePerNight;
-				response.Flight = matchingFlights.First();
-				response.Hotel = matchingHotels.First();
+				foreach (Hotel hotel in matchingHotels)
+				{
+					response.Add(new HolidaySearchResponse()
+					{
+						Flight = flight,
+						Hotel = hotel,
+						TotalPrice = flight.Price + (hotel.PricePerNight * hotel.Nights)
+					});
+				}
 			}
 
 			return response;
@@ -82,14 +91,14 @@ namespace HolidaySearch.Services
 			{
 				return new()
 				{
-					"LTN",
-					"LGW",
-					"LHR",
-					"LCY"
+					"ltn",
+					"lgw",
+					"lhr",
+					"lcy"
 				};
 			}
 
-			return new() { airport };
+			return new() { airport?.ToLower() };
 		}
 
 		private static bool RequestValid(HolidaySearchRequest searchRequest)

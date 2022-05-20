@@ -30,13 +30,40 @@ namespace HolidaySearch.Tests.DataFactories
               Duration = "14",
           };
 
-        public static HolidaySearchRequest InvalidRequest =>
+        public static HolidaySearchRequest InvalidRequestDepartureDate =>
           new()
           {
               DepartingFrom = "Any Airport",
               TravelingTo = "LPA",
               DepartureDate = "testing",
-              Duration = "abc",
+              Duration = "7",
+          };
+
+        public static HolidaySearchRequest InvalidRequestDuration =>
+          new()
+          {
+              DepartingFrom = "Any Airport",
+              TravelingTo = "LPA",
+              DepartureDate = "2023/01/01",
+              Duration = "testing",
+          };
+
+        public static HolidaySearchRequest ValidRequetCaseInsensitive =>
+          new()
+          {
+              DepartingFrom = "man",
+              TravelingTo = "AgP",
+              DepartureDate = "2023-07-01",
+              Duration = "7",
+          };
+
+        public static HolidaySearchRequest ValidRequestNoMatch =>
+          new()
+          {
+              DepartingFrom = "TTT",
+              TravelingTo = "AGP",
+              DepartureDate = "2023-07-01",
+              Duration = "7",
           };
     }
 }
